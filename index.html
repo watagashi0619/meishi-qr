@@ -1,3 +1,175 @@
----
-redirect_to: "https://twitter.com/_2pt/"
----
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.0.0/dist/mindar-image.prod.js"></script>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.0.0/dist/mindar-image-aframe.prod.js"></script>
+
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+
+        #scanning-overlay {
+            z-index: 2;
+        }
+
+        .overlay {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            background: transparent;
+        }
+
+        @media (min-aspect-ratio: 1/1) {
+            #scanning-overlay .inner {
+                width: 50vh;
+                height: 50vh;
+            }
+        }
+
+        @media (max-aspect-ratio: 1/1) {
+            #scanning-overlay .inner {
+                width: 80vw;
+                height: 80vw;
+            }
+        }
+
+        #scanning-overlay .inner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+
+            background:
+                linear-gradient(to right, white 10px, transparent 10px) 0 0,
+                linear-gradient(to right, white 10px, transparent 10px) 0 100%,
+                linear-gradient(to left, white 10px, transparent 10px) 100% 0,
+                linear-gradient(to left, white 10px, transparent 10px) 100% 100%,
+                linear-gradient(to bottom, white 10px, transparent 10px) 0 0,
+                linear-gradient(to bottom, white 10px, transparent 10px) 100% 0,
+                linear-gradient(to top, white 10px, transparent 10px) 0 100%,
+                linear-gradient(to top, white 10px, transparent 10px) 100% 100%;
+            background-repeat: no-repeat;
+            background-size: 40px 40px;
+        }
+
+        #scanning-overlay.hidden {
+            display: none;
+        }
+
+        #scanning-overlay img {
+            opacity: 0.6;
+            width: 90%;
+            align-self: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="scanning-overlay" class="overlay hidden">
+        <div class="inner">
+            <img src="img/meisi_omote.jpg" />
+        </div>
+    </div>
+
+    <a-scene mindar-image="uiScanning: #scanning-overlay; imageTargetSrc: marker/targets.mind;"
+        vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+        <a-assets>
+            <img id="card" src="img/meisi_omote.jpg" />
+            <img id="icon-twitter" src="img/icons/twitter.png" />
+            <img id="icon-instagram" src="img/icons/instagram.png" />
+            <img id="icon-github" src="img/icons/github.png" />
+            <img id="icon-browser" src="img/icons/browser.png" />
+            <img id="icon-hatenablog" src="img/icons/hatenablog.png" />
+            <img id="icon-mail" src="img/icons/mail.png" />
+        </a-assets>
+        <a-camera position="0 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse;"
+            raycaster="far: 10000; objects: .clickable"></a-camera>
+        <a-entity id="target" mindar-image-target="targetIndex: 0">
+            <a-image visible=false id="twitter-button" class="clickable" src="#icon-twitter" position="0.18 0.23 0"
+                height="0.08" width="0.08"
+                animation="property: scale; to: 1.2 1.2 1.2; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate">
+            </a-image>
+            <a-image visible=false id="instagram-button" class="clickable" src="#icon-instagram" position="0.18 0.14 0"
+                height="0.08" width="0.08"
+                animation="property: scale; to: 1.2 1.2 1.2; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate">
+            </a-image>
+            <a-image visible=false id="github-button" class="clickable" src="#icon-github" position="0.18 0.05 0"
+                height="0.08" width="0.08"
+                animation="property: scale; to: 1.2 1.2 1.2; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate">
+            </a-image>
+            <a-image visible=false id="browser-button" class="clickable" src="#icon-browser" position="0.18 -0.04 0"
+                height="0.08" width="0.08"
+                animation="property: scale; to: 1.2 1.2 1.2; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate">
+            </a-image>
+            <a-image visible=false id="hatenablog-button" class="clickable" src="#icon-hatenablog"
+                position="0.18 -0.13 0" height="0.08" width="0.08"
+                animation="property: scale; to: 1.2 1.2 1.2; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate">
+            </a-image>
+            <a-image visible=false id="mail-button" class="clickable" src="#icon-mail" position="0.18 -0.22 0"
+                height="0.08" width="0.08"
+                animation="property: scale; to: 1.2 1.2 1.2; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate">
+            </a-image>
+        </a-entity>
+    </a-scene>
+
+    <script>
+        const overlay = document.querySelector("#scanning-overlay");
+        const entity = document.querySelector("#target");
+
+        const twitterButton = document.querySelector("#twitter-button");
+        const instagramButton = document.querySelector("#instagram-button");
+        const githubButton = document.querySelector("#github-button");
+        const browserButton = document.querySelector("#browser-button");
+        const hatenablogButton = document.querySelector("#hatenablog-button");
+        const mailButton = document.querySelector("#mail-button");
+
+        entity.addEventListener("targetFound", () => {
+            overlay.classList.add("hidden");
+            twitterButton.setAttribute("visible", true);
+            instagramButton.setAttribute("visible", true);
+            githubButton.setAttribute("visible", true);
+            browserButton.setAttribute("visible", true);
+            hatenablogButton.setAttribute("visible", true);
+            mailButton.setAttribute("visible", true);
+
+            twitterButton.addEventListener('click', () => {
+                document.location.href = "https://twitter.com/_2pt/";
+            });
+            instagramButton.addEventListener('click', () => {
+                document.location.href = "https://www.instagram.com/potagashi/";
+            });
+            githubButton.addEventListener('click', () => {
+                document.location.href = "https://github.com/watagashi0619/";
+            });
+            browserButton.addEventListener('click', () => {
+                document.location.href = "http://pota.xyz/";
+            });
+            hatenablogButton.addEventListener('click', () => {
+                document.location.href = "https://potaxyz.hatenablog.jp/";
+            });
+            mailButton.addEventListener('click', () => {
+                document.location.href = (() => {
+                    const s = "eYadlg2oYlY_Yk`a(.)18_eYad&[ge";
+                    let r = "";
+                    for (i = 0; i < s.length; i++) r += String.fromCharCode((s.charCodeAt(i) -
+                            25) %
+                        93 + 33);
+                    return r;
+                })();
+            });
+        });
+        entity.addEventListener("targetLost", () => {
+            overlay.classList.remove("hidden");
+        });
+    </script>
+</body>
+
+</html>
